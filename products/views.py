@@ -1,14 +1,17 @@
 from django.shortcuts import render
 from django.views.generic import ListView
+from django.shortcuts import get_object_or_404
+from django.core.paginator import Paginator
 
-from .models import Product
+from .models import Product, Category
 
 # Create your views here.
 
+# HOME PAGE 
 class Home(ListView):
     model = Product
     template_name = "product/home.html"
-    context_object_name = "products"  # ontext name to access products in frontend.
+    context_object_name = "products"  # Context name to access products in frontend.
     paginate_by = 8
 
 
@@ -21,11 +24,59 @@ class Home(ListView):
 #     return render(request, 'product/home.html', context)
 
 
-def products(request):
-    pass
+# ALL PRODUCTS
+def products(request, category_slug=None):
 
+    if category_slug != None:
+        category = get_object_or_404(Category, slug=category_slug)
+        products = Product.objects.filter(category=category, is_available=True)
+    else:
+        products = Product.objects.all()
+
+    products_count = products.count()
+    all_categories = Category.objects.all()
+
+    paginator = Paginator(products, 2) # show 9 products.
+    page_number = request.GET.get('page') # get the page number from the url
+    products = paginator.get_page(page_number) # get the products for the page number
+
+    context = {
+        'products':products,
+        'products_count':products_count,
+        'all_categories':all_categories,
+    }
+    return render(request, 'product/products.html', context)
+
+
+# SEARCH FUNCTION BASIC ELASTIC SEARCH WONT WORK IN WINDOWS EITHER USE LINUX OR USE DOCKER CONTAINERISATION.
 def search(request):
-    pass
+    if request.method == 'GET':
+        serach_item = request.GET.get('keyword')
+        if not serach_item or len(serach_item) > 30:
+            serach_item = Product.objects.none()
+            # i should implement 404 page later
+        else:
+            serach_output = Product.objects.filter(name__icontains = serach_item)
+    if serach_output:
+        product_count = serach_output.count()
+    else:
+        product_count = 0
 
-def product_detail(request):
-    pass
+    
+    
+    context = {
+        'products':serach_output,
+        'products_count':product_count,
+    }
+
+    return render(request, 'product/products.html', context)
+
+# PRODUCT DETAILS
+
+def product_detail(request, category_slug, product_slug):
+    product = get_object_or_404(Product, category__slug=category_slug, slug=product_slug)
+
+    context = {
+        'product':product,
+    }
+    return render(request, 'product/product_detail.html', context)
