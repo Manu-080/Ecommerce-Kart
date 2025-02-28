@@ -49,6 +49,7 @@ def products(request, category_slug=None):
 
 
 # SEARCH FUNCTION BASIC ELASTIC SEARCH WONT WORK IN WINDOWS EITHER USE LINUX OR USE DOCKER CONTAINERISATION.
+#  i will implement elastic search with fuzziness later at end of this project also i need to implement redis cache.
 def search(request):
     if request.method == 'GET':
         serach_item = request.GET.get('keyword')
