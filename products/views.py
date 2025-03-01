@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 
 from .models import Product, Category
+from cart.models import CartItem
 
 # Create your views here.
 
@@ -77,7 +78,13 @@ def search(request):
 def product_detail(request, category_slug, product_slug):
     product = get_object_or_404(Product, category__slug=category_slug, slug=product_slug)
 
+    if request.user.is_authenticated:
+        incart = CartItem.objects.filter(cart__user=request.user, product=product)
+    else:
+        incart = None
+        
     context = {
         'product':product,
+        'in_cart':incart,
     }
     return render(request, 'product/product_detail.html', context)

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'users',
     'products',
     'cart',
+    'orders',
 ]
 
 AUTH_USER_MODEL = 'users.User'
@@ -72,6 +73,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'cart.context_processors.get_quantity', # cart=appname context_processors=file name get_quantity=function name.
             ],
         },
     },

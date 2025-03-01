@@ -27,9 +27,10 @@ def signin(request):
 
         if user_auth:
             login(request, user_auth)
+            return redirect('home')
         else:
             messages.error(request, 'Invalid Credentials')
-            return redirect('login')
+            
     
 
     return render(request, 'user/login.html')

@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{user.username}}  Payment{% endblock title %}
+
+{% block content %}
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y bg">
+    <div class="container">
+    
+    <!-- ============================ COMPONENT 1 ================================= -->
+     
+    <div class="row">
+        <aside class="col-lg-8">
+    <div class="card">
+        <div class="card">
+            <h5 class="card-header">Billing Adress</h5>
+            <div class="card-body">
+              <h5 class="card-title">Special title treatment</h5>
+              <p class="card-text mb-0">Name: {{order_address.user.username}}</p>
+              <p class="card-text mb-0">Address: {{order_address.address}}</p>
+              <p class="card-text mb-0">{{order_address.city}} {{order.state}}</p>
+              <p class="card-text mb-0">Email: {{order_address.email}}</p>
+              <p class="card-text mb-0">Pincode: {{order_address.pincode}}</p>
+              <p class="card-text mb-0">Phone: {{order_address.phone_number}}</p>
+              
+            </div>
+          </div>
+    </div> <!-- card.// -->
+
+    <div class="card">
+        <div class="card">
+            <h5 class="card-header">Review Products</h5>
+            <div class="card-body">
+                <table class="table table-borderless table-shopping-cart">
+                    <thead class="text-muted">
+                    <tr class="small text-uppercase">
+                      <th scope="col">Product</th>
+                      <th scope="col" width="120">Quantity</th>
+                      <th scope="col" width="120">Price</th>
+              
+                    </tr>
+                    </thead>
+                    <tbody>
+              
+                    {% for cart_item in cart_items %}
+                    <tr>
+                        <td>
+                            <figure class="itemside align-items-center">
+                                 <div class="aside"><a href="{{cart_item.product.get_url}}"><img src="{{ cart_item.product.image.url }}" class="img-sm"></a></div>
+                                <figcaption class="info">
+                                    <a href="{{ cart_item.product.get_url }}" class="title text-dark">{{ cart_item.product.name }}</a>
+                                    <p class="text-muted small">
+                                        {% if cart_item.product_variant %}
+                                            {% for item in cart_item.product_variant.all %}
+                                                {{ item.variant_type | capfirst }} : {{ item.variant_value | capfirst }} <br>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </p>
+                                </figcaption>
+                            </figure>
+                        </td>
+                        <td>
+                            <!-- col.// -->
+                                    <label for="">{{cart_item.quantity}}</label>
+                        </td>
+                        <td>
+                            <div class="price-wrap">
+                                <var class="price">₹ {{ cart_item.sub_total }}</var>
+                                <small class="text-muted"> ₹ {{ cart_item.product.discount_price }} each </small>
+                            </div> <!-- price-wrap .// -->
+                        </td>
+              
+                    </tr>
+                    {% endfor %}
+              
+                    </tbody>
+                    </table>
+              
+            
+            </div>
+        </div>
+    </div> <!-- card.// -->
+    
+        </aside> <!-- col.// -->
+        <aside class="col-lg-4">
+            
+
+            <div class="card">
+            <div class="card-body">
+                <dl class="dlist-align">
+                  <dt>Total price:</dt>
+                  <dd class="text-right">₹ {{total_price}}/-</dd>
+                </dl>
+                <dl class="dlist-align">
+                  <dt>Tax:</dt>
+                  <dd class="text-right">₹ {{tax}}/-</dd>
+                </dl>
+                <dl class="dlist-align">
+                  <dt>Total:</dt>
+                  <dd class="text-right text-dark b"><strong>₹ {{total}}/-</strong></dd>
+                </dl>
+                <hr>
+                <p class="text-center mb-3">
+                    <img src="{% static "./images/misc/payments.png" %}" height="26">
+                </p>
+                <!-- Set up a container element for the button -->
+                <div id="paypal-button-container">
+                    <!-- PayPal Button Will Load -->
+                </div>
+                
+            </div> <!-- card-body.// -->
+            </div> <!-- card.// -->
+    
+    </aside> <!-- col.// -->
+    
+    
+    </div> <!-- row.// -->
+    <!-- ============================ COMPONENT 1 END .// ================================= -->
+    
+    </div> <!-- container .//  -->
+    </section>
+    <!-- ========================= SECTION CONTENT END// ========================= -->
+    
+
+{% endblock content %}
