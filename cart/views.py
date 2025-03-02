@@ -13,6 +13,8 @@ def cart(request):
     discount = 0
     tax = 0
     total = 0
+    discount_price = 0
+
     current_user = request.user
 
     if current_user.is_authenticated:
@@ -23,11 +25,12 @@ def cart(request):
     for items in cart_items:
         if items.product.stock <= 0:
             continue
-        total_price += items.product.price
+        total_price += (items.product.price * items.quantity)
         discount += (items.product.price - items.product.discount_price)
+        discount_price += (items.product.discount_price * items.quantity)
 
-    tax = round((0.9*total_price)/100) # calculate tax
-    total = total_price + tax
+    tax = round((0.9*discount_price)/100) # calculate tax
+    total = discount_price + tax
 
     context = {
         'cart_items':cart_items,
@@ -109,7 +112,7 @@ def add_to_cart(request, product_slug):
     return redirect(request.META.get('HTTP_REFERER', 'cart')) # If pressing add to cart from product_detail page REDIRECT to product_detail or redirect to cart.html
 
 
-
+@login_required(login_url='login')
 def remove(request, product_slug, cart_item_id):
     product = get_object_or_404(Product, slug=product_slug)
 
@@ -121,6 +124,7 @@ def remove(request, product_slug, cart_item_id):
 
 
 
+@login_required(login_url='login')
 def decrement_cart_item(request, product_slug, cart_item_id):
     product = get_object_or_404(Product, slug=product_slug)
 

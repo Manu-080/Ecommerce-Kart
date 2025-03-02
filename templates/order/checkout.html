@@ -16,7 +16,7 @@
           <div class="card">
             <h5 class="card-header">Billing Address</h5>
             <div class="card-body">
-                <form action="{%url 'payment'%}" method="POST">
+                <form action="{%url 'place_order'%}" method="POST">
                     {% csrf_token %}
         
                     {% for address in user_address %}

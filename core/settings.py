@@ -158,3 +158,8 @@ EMAIL_USE_TLS = True
 #     }
 # }
 #       REDIS WONT WORK IN WINDOWS SO USING Django's IN BUILT CACHE
+
+
+# razorpay
+razor_pay_id = config('razor_pay_id')
+key_secret = config('key_secret')

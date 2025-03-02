@@ -5,8 +5,9 @@ from .models import UserAddress
 from cart.models import CartItem
 # Create your views here.
 
+# LAST STAGE BEFORE PAYMENT.
 @login_required(login_url='login')
-def payment(request):
+def place_order(request):
     total_price =0
     tax = 0
     total = 0
@@ -20,7 +21,7 @@ def payment(request):
     cartitem = CartItem.objects.filter(cart__user = request.user)
 
     for item in cartitem:
-        total_price += item.product.discount_price
+        total_price += (item.product.discount_price * item.quantity)
 
     tax = round((0.9*total_price)/100)
     total = tax + total_price
