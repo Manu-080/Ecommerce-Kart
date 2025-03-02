@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{user.username}}  Delete Address{% endblock title %}
+
+{% block content %}
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y bg">
+    <div class="container">
+    
+    <!-- ============================ COMPONENT 1 ================================= -->
+     
+    <div class="row">
+        <aside class="col-lg-6">
+            {% include "basic_include/alerts.html" %}
+          <div class="card">
+            <h5 class="card-header">Billing Address</h5>
+            <div class="card-body">
+                <form action="{%url 'delete_address'%}" method="POST">
+                    {% csrf_token %}
+        
+                    {% for address in user_address %}
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <input type="radio" name="selected_address" value="{{ address.id }}" {% if forloop.first %}checked{% endif %}>
+                                <strong>{{ address.user.username}} </strong><br>
+                                <p class="card-text mb-0">{{ address.address }}, {{ address.city }}, {{ address.state }}, Pincode : {{ address.pincode }}</p>
+                                <p class="card-tex mb-0">{{ address.country }}</p>
+                                <p class="card-tex mb-0">Phone: {{ address.phone_number }}</p>
+                                <p class="card-tex mb-0">Email: {{ address.email }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" name="submit" class="btn btn-primary btn-block w-50 btn-center">Delete Address</button>
+                    </div>
+                    </form>
+                
+            </div>
+        </div>
+        
+    
+        </aside> <!-- col.// -->
+     
+    
+    </div> <!-- row.// -->
+    
+        <!-- ============================ COMPONENT 1 END .// ================================= -->
+        
+        </div> <!-- container .//  -->
+        </section>
+        <!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock content %}

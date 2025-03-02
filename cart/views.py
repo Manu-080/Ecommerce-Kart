@@ -148,7 +148,7 @@ def checkout(request):
 
     # TO view user_adress in checkout.html
     try:
-        user_address = UserAddress.objects.filter(user=request.user)[:3]
+        user_address = UserAddress.objects.filter(user=request.user)[:5]
     except:
         user_address = None 
   

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}{{user.username}} Update Account{% endblock title %}
+
+
+{% block content %}
+
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y">
+
+    <!-- ============================ COMPONENT REGISTER   ================================= -->
+        <div class="card mx-auto" style="max-width:520px; margin-top:40px;">
+          <article class="card-body">
+            <header class="mb-4"><h4 class="card-title">Sign up</h4></header>
+            {% include 'basic_include/alerts.html'%}
+            <form action="{% url 'update_user' %}" method="POST">
+                {% csrf_token %}
+
+                    <div class="form-row">
+                        <div class="col form-group">
+                            <label>First name</label>
+                            {{form.first_name}}
+                        </div> <!-- form-group end.// -->
+                        <div class="col form-group">
+                            <label>Last name</label>
+                            {{form.last_name}}
+                        </div> <!-- form-group end.// -->
+                    </div> <!-- form-row end.// -->
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>Email</label>
+                            {{form.email}}
+                            <small class="error">{{ form.email.errors }}</small>
+                        </div> <!-- form-group end.// -->
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                          <label>Phone Number</label>
+                          {{form.phone_number}}
+                          <small class="error">{{ form.phone_number.errors }}</small>
+                
+                        </div> <!-- form-group end.// -->
+                        
+                    </div> <!-- form-row.// -->
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block"> Update  </button>
+                    </div> <!-- form-group// --> 
+    
+                </form>
+            </article><!-- card-body.// -->
+        </div> <!-- card .// -->
+        <br><br>
+    <!-- ============================ COMPONENT REGISTER  END.// ================================= -->
+
+{% endblock content %}

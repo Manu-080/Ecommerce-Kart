@@ -9,6 +9,7 @@
 <section class="section-conten padding-y bg">
 
     <div class="container">
+        {% include "basic_include/alerts.html" %}
         <div class="row">
         <aside class="col-md-3">
             <!--   SIDEBAR   -->
@@ -18,7 +19,8 @@
                 <a class="list-group-item" href="#"> Return and refunds </a>
                 <a class="list-group-item" href="#">Settings </a>
                 <a class="list-group-item" href="{% url 'add_address'%}"> Add Address </a>
-                <a class="list-group-item" href="#"> Received orders </a>
+                <a class="list-group-item" href="{% url 'delete_address'%}"> Delete Addresses </a>
+                <a class="list-group-item" href="{% url 'update_user'%}"> Update Account </a>
             </ul>
             <br>
             <a class="btn btn-light btn-block" href="{% url 'logout' %}"> <i class="fa fa-power-off"></i> <span class="text">Log out</span> </a> 

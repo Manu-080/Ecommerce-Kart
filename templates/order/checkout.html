@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{user.username}}  Payment{% endblock title %}
+{% block title %}{{user.username}}  Checkout{% endblock title %}
 
 {% block content %}
 
@@ -33,7 +33,7 @@
                     {% endfor %}
                         
                     
-                    <a href="{% url 'add_address' %}" class="btn btn-primary">Add address</a>
+                    <a href="{% url 'dashboard' %}" class="btn btn-primary">Manage address</a>
                 
             </div>
         </div>

@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -14,6 +14,8 @@ from django.core.cache import cache # For importing chache currently using djang
 
 from .models import User
 from .forms import UserSignupForm
+from orders.models import UserAddress
+from .update_user_form import UserUpdateForm
 
 # Create your views here.
 
@@ -128,3 +130,75 @@ def reset_password(request):
         return redirect('login')
 
     return render(request, 'user/reset_password.html')
+
+
+
+@login_required(login_url='login')
+def add_address(request):
+    
+
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        phone_number = request.POST.get('phone_number')
+        address = request.POST.get('address')
+        landmark = request.POST.get('landmark')
+        city = request.POST.get('city')
+        pincode = request.POST.get('pincode')
+        state = request.POST.get('state')
+
+        user_address = UserAddress.objects.create(user=request.user, first_name=first_name, last_name=last_name, email=email,
+                                    phone_number=phone_number,address=address, landmark=landmark, city=city, pincode=pincode, state=state)
+        
+        user_address.save()
+        messages.success(request, 'Address added.')
+
+        return redirect('dashboard')
+    
+    return render(request, 'user/add_address.html')
+
+
+
+
+@login_required(login_url='login')
+def delete_address(request):
+    user_address = UserAddress.objects.filter(user=request.user)
+
+    if request.method == 'POST':
+        selected_address_id = request.POST.get('selected_address')
+        selected_address_obj = get_object_or_404(UserAddress, id=selected_address_id)
+
+        selected_address_obj.delete()
+        messages.success(request, 'Updated Account details')
+
+        return redirect('delete_address')
+
+    context = {
+        'user_address':user_address,
+    }
+    return render(request, 'user/delete_address.html', context)
+
+
+
+
+@login_required(login_url='login')
+def update_user(request):
+    user = request.user
+
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, instance=request.user)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Updated Account details')
+
+            return redirect('dashboard')
+        
+
+    form = UserUpdateForm(instance=request.user)
+
+    context = {
+        'form':form,
+    }
+    return render(request, 'user/update_user.html', context)

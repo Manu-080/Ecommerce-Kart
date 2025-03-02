@@ -12,4 +12,9 @@ urlpatterns = [
     path('verify-otp/', views.verify_otp, name='verify_otp'),
     path('reset-password/', views.reset_password, name='reset_password'),
 
+    path('add-address-user/', views.add_address, name='add_address'),
+    path('delete-address-user/', views.delete_address, name='delete_address'),
+
+    path('update-user-data/', views.update_user, name='update_user'),
+
 ]
