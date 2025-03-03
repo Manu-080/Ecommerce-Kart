@@ -58,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'users.admin_middleware.RestrictAdminAccessMiddleware', # CUSTOM MIDDLEWARE ONLY ADMINS AND STAFF CAN SEE LOGIN PAGE. ALWAYS PLACE THIS MIDDLEWARE AFTER AUTHENTICATION MIDDLEWARE.
 ]
 
 ROOT_URLCONF = 'core.urls'

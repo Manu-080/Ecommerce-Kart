@@ -143,6 +143,11 @@ def checkout(request):
     
     cartitem = CartItem.objects.filter(cart__user = request.user)
 
+     # If the cart is empty, prevent access and redirect to cart page
+    if not cartitem.exists():
+        messages.error(request, "Your cart is empty. Add items before proceeding to checkout.")
+        return redirect("cart")  # Redirect to the cart page
+
     for item in cartitem:
         total += item.product.discount_price
 
