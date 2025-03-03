@@ -88,3 +88,10 @@ def product_detail(request, category_slug, product_slug):
         'in_cart':incart,
     }
     return render(request, 'product/product_detail.html', context)
+
+
+
+
+# 404 PAGE 
+def page_404(request):
+    return render(request, 'basic_include/404_page.html')

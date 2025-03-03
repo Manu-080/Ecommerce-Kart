@@ -2,9 +2,14 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from decimal import Decimal
+from django.core.mail import send_mail
 
 from .models import UserAddress, Order, OrderItem, Payment
 from cart.models import CartItem
+
+# for sending email after placing order.
+from .utils import send_order_placed_email
+
 # Create your views here.
 
 # LAST STAGE BEFORE PAYMENT.
@@ -54,9 +59,6 @@ def place_order_COD(request):
 
     current_user = request.user
 
-    selected_address_id = request.session.get('selected_address_id')
-    user_address = UserAddress.objects.get(id=selected_address_id, user=current_user)
-
     cart_item = CartItem.objects.filter(cart__user = current_user) # gets all the items in cart corresponding to the user.
 
     # If the cart is empty, prevent access and redirect to cart page
@@ -64,6 +66,10 @@ def place_order_COD(request):
         messages.error(request, "Your cart is empty. Add items before proceeding to checkout.")
         return redirect("cart")  # Redirect to the cart page
 
+    selected_address_id = request.session.get('selected_address_id')
+    user_address = UserAddress.objects.get(id=selected_address_id, user=current_user)
+
+    
     # Calculate total price
     total_price = sum(Decimal(item.product.discount_price) * Decimal(item.quantity) for item in cart_item)
     
@@ -95,12 +101,20 @@ def place_order_COD(request):
         )
     messages.success(request, 'Order placed successfully')
 
+
+    # SENDING EMAIL TO USER AFTER PLACING ORDER
+    send_order_placed_email(current_user.email, cart_item)
+    print(current_user.email)
+
+
+    # delete cartitems and value in session
     cart_item.delete()
     del request.session['selected_address_id'] # to delete session id
 
-
+    
     return redirect('home')
 
 
+@login_required(login_url='login')
 def show_orders(request):
     pass
