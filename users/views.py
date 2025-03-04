@@ -14,7 +14,7 @@ from django.core.cache import cache # For importing chache currently using djang
 
 from .models import User
 from .forms import UserSignupForm
-from orders.models import UserAddress
+from orders.models import UserAddress, OrderItem
 from .update_user_form import UserUpdateForm
 
 # Create your views here.
@@ -74,8 +74,18 @@ def signout(request):
     logout(request)
     return redirect('login')
 
+
+@login_required(login_url='login')
 def dashboard(request):
-    return render(request, 'user/dashboard.html')
+    try:
+        ordered_items = OrderItem.objects.filter(user=request.user)
+    except OrderItem.DoesNotExist:
+        pass
+
+    context = {
+        'ordered_items':ordered_items,
+    }
+    return render(request, 'user/dashboard.html', context)
 
 
 @login_required(login_url='login')

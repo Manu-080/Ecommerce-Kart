@@ -36,7 +36,7 @@ class Order(models.Model):
         ('delivered', 'Delivered'),
         ('cancelled', 'Cancelled'),
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
     address = models.ForeignKey(UserAddress, on_delete=models.SET_NULL, null=True) # If user deleted one of his adress then that model object should not be deleted.
     total_price = models.DecimalField(max_digits=16, decimal_places=2,default=Decimal('0.00'))
     status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='pending')
@@ -55,12 +55,13 @@ class Order(models.Model):
 
 
     def __str__(self):
-        return f"Order {self.id} | {self.user.username}"
+        return f"Order: {self.id} | Name: {self.user.username}"
     
-    
+
 
 # ORDER ITEMS , PRODUCTS THE USER BUYING AT EVERY ORDER EG: A ORDER WOULD HAVE MULTIPLE ORDER ITEMS.
 class OrderItem(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_order_items', null=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()

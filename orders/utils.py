@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.mail import send_mail
 
-
+# SEND EMAIL FUNCTION AFTER PURCHASING ORDER.
 def send_order_placed_email(email, cart_item):
 
     if not cart_item:
