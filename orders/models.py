@@ -7,6 +7,7 @@ from products.models import Product
 # Create your models here.
 
 
+# TO SAVE USER ADDRESS
 class UserAddress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_addresses')
     first_name = models.CharField(max_length=100)
@@ -42,10 +43,20 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_paid = models.BooleanField(default=False)
+    is_delivered = models.BooleanField(default=False)
+
+
+    def save(self, *args, **kwargs):
+        if self.status == 'delivered': # would only True if order is delivered.
+            self.is_delivered = True
+        else:
+            self.is_delivered = False # Ensure consistency when status changes
+        return super().save(*args, **kwargs)
 
 
     def __str__(self):
         return f"Order {self.id} | {self.user.username}"
+    
     
 
 # ORDER ITEMS , PRODUCTS THE USER BUYING AT EVERY ORDER EG: A ORDER WOULD HAVE MULTIPLE ORDER ITEMS.
@@ -62,6 +73,7 @@ class OrderItem(models.Model):
         return f"Quantity: {self.quantity} | Product: {self.product.name} | User:-> {self.order.user.username}"
     
     
+
 # ORDER PAYMENT MODEL
 class Payment(models.Model):
     order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name='payments')
