@@ -1,5 +1,5 @@
 import razorpay
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from decimal import Decimal
@@ -11,6 +11,8 @@ import json
 
 from .models import UserAddress, Order, OrderItem, Payment
 from cart.models import CartItem
+from products.forms import ReviewForm
+from products.models import Product, Review
 
 # for sending email after placing order.
 from .utils import send_order_placed_email
@@ -98,8 +100,15 @@ def place_order_COD(request):
             user=current_user,
             product=item.product, 
             quantity=item.quantity, 
-            price=item.product.discount_price
+            price=item.product.discount_price,
             )
+        # Ensure item.product_variant is iterable before calling .set()
+        if item.product_variant.exists():  # If it's a queryset
+            order_item.variant.set(item.product_variant.all())  
+        else:
+            order_item.variant.set([])  # Set an empty list if no variants exist
+
+        order_item.save()
 
     payment = Payment.objects.create(
         order=order, 
@@ -193,8 +202,16 @@ def razor_pay_verification(request):
             user=current_user,
             product=item.product, 
             quantity=item.quantity, 
-            price=item.product.discount_price
+            price=item.product.discount_price,
             )
+        # Ensure item.product_variant is iterable before calling .set()
+        if item.product_variant.exists():  # If it's a queryset
+            order_item.variant.set(item.product_variant.all())  
+        else:
+            order_item.variant.set([])  # Set an empty list if no variants exist
+
+        order_item.save()
+
 
     payment = Payment.objects.create(
         order=order, 
@@ -217,3 +234,44 @@ def razor_pay_verification(request):
 
 
     return redirect('home')
+
+
+
+
+@login_required(login_url='login')
+def add_review(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    try:
+        review = Review.objects.get(user=request.user, product=product)
+    except Review.DoesNotExist:
+        review = None
+    
+    if request.method == 'POST':
+        try:
+            review = Review.objects.get(user=request.user, product=product)
+            form = ReviewForm(request.POST, instance=review)
+            form.save()
+            messages.success(request, 'Review Updated')
+            return redirect('dashboard')
+        except Review.DoesNotExist:
+            form = ReviewForm(request.POST)
+            if form.is_valid():
+                data = Review()
+                data.subject = form.cleaned_data['subject']
+                data.rating = form.cleaned_data['rating']
+                data.user = request.user
+                data.product = product
+                data.is_reviewed = True
+                data.save()
+                messages.success(request, 'Review submitted')
+                return redirect('dashboard')
+
+    try:
+        form = ReviewForm(instance=review)
+    except:
+        form = ReviewForm()
+
+    context = {
+        'form':form,
+    }
+    return render(request, 'order/add_review.html', context)

@@ -11,5 +11,8 @@ urlpatterns = [
 
     path("razor_pay_verification/", views.razor_pay_verification, name="razor_pay_verificationt"),
 
+
+    path("add-review/<int:product_id>", views.add_review, name="add_review"),
+
     
 ]

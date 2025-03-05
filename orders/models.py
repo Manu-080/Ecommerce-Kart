@@ -3,7 +3,7 @@ from django.core.validators import RegexValidator
 from decimal import Decimal
 
 from users.models import User
-from products.models import Product
+from products.models import Product, ProductVariant
 # Create your models here.
 
 
@@ -64,6 +64,7 @@ class OrderItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_order_items', null=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    variant = models.ManyToManyField(ProductVariant, blank=True)
     quantity = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
 

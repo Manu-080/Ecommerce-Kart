@@ -2,7 +2,9 @@ from django.db import models
 from django.utils.text import slugify
 from django.urls import reverse
 import uuid
+from django.core.validators import MinValueValidator, MaxValueValidator
 
+from users.models import User
 # Create your models here.
 
 class Category(models.Model):
@@ -118,4 +120,22 @@ class ProductVariant(models.Model):
 
     def __str__(self):
         return f"{self.product.name}  | {self.variant_value}"
+    
+
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_reviews')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    rating = models.PositiveSmallIntegerField(
+                                validators=[MinValueValidator(1), MaxValueValidator(5)]
+        )  # 1-5 stars
+    subject = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_reviewed = models.BooleanField(default=False)
+
+
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.product.name} ({self.rating} stars)"
     

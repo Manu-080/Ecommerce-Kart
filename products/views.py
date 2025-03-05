@@ -82,10 +82,14 @@ def product_detail(request, category_slug, product_slug):
         incart = CartItem.objects.filter(cart__user=request.user, product=product)
     else:
         incart = None
+
+    product_reviews = product.reviews.all()
         
     context = {
         'product':product,
         'in_cart':incart,
+        'product_reviews':product_reviews,
+        
     }
     return render(request, 'product/product_detail.html', context)
 
