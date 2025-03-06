@@ -3,6 +3,7 @@ from django.utils.text import slugify
 from django.urls import reverse
 import uuid
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db.models import Avg
 
 from users.models import User
 # Create your models here.

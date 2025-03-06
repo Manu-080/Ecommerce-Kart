@@ -117,6 +117,11 @@ def place_order_COD(request):
         else:
             order_item.variant.set([])  # Set an empty list if no variants exist
 
+
+        product = get_object_or_404(Product, id=item.product.pk) # reducing stock after purchasing
+        product.stock -= item.quantity
+        product.save()
+
         order_item.save()
 
     payment = Payment.objects.create(
@@ -222,6 +227,10 @@ def razor_pay_verification(request):
             order_item.variant.set(item.product_variant.all())  
         else:
             order_item.variant.set([])  # Set an empty list if no variants exist
+
+        product = get_object_or_404(Product, id=item.product.pk) # reducing stock after purchasing
+        product.stock -= item.quantity
+        product.save()
 
         order_item.save()
 

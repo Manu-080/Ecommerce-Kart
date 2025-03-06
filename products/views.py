@@ -3,7 +3,7 @@ from django.views.generic import ListView
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 
-from .models import Product, Category
+from .models import Product, Category, ProductImage
 from cart.models import CartItem
 
 # Create your views here.
@@ -14,6 +14,9 @@ class Home(ListView):
     template_name = "product/home.html"
     context_object_name = "products"  # Context name to access products in frontend.
     paginate_by = 8
+
+    def get_queryset(self):
+        return Product.objects.all().order_by('id')
 
 
 # function based view for home page.
@@ -84,12 +87,18 @@ def product_detail(request, category_slug, product_slug):
     else:
         incart = None
 
+    # GET PRODUCT REVIEWS
     product_reviews = product.reviews.all()
+
+    # GET PRODUCT IMAGES
+    product_images = ProductImage.objects.filter(product__id = product.pk)
+    
         
     context = {
         'product':product,
         'in_cart':incart,
         'product_reviews':product_reviews,
+        'product_images':product_images,
         
     }
     return render(request, 'product/product_detail.html', context)
