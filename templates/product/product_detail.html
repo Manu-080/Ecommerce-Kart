@@ -3,6 +3,25 @@
 {% load custom_filters %}
 
 {% block content %}
+<style>
+  ul.thumb{
+    margin:0 auto;
+    padding:0;
+    float:left;
+
+  }
+  ul.thumb li{
+    list-style:none;
+    margin:10px;
+    
+  }
+  ul.thumb li img{
+    width:80px;
+    height:80px;
+    border:1px solid gray;
+
+  }
+</style>
 <!-- ============================ SECTION CONTENT START ================================= -->
 <section class="section-content padding-y bg">
     <div class="container">
@@ -12,11 +31,19 @@
         <div class="row no-gutters">
             <aside class="col-md-6">
     <article class="gallery-wrap"> 
-        <div class="img-big-wrap">
-           <a href="#"><img src="{{product.image.url}}"></a>
+        <div class="img-big-wrap mainimage">
+           <center><img src="{{product.image.url}}"></center>
         </div> <!-- img-big-wrap.// -->
         
     </article> <!-- gallery-wrap .end// -->
+    <ul class="thumb">
+      <li>
+        <a href="{{product.image.url}}" target="mainimage"><img src="{{product.image.url}}" alt="Product image"></a>
+        {% for i in product_images %}
+        <a href="{{i.image.url}}" target="mainimage"><img src="{{i.image.url}}" alt="Product image"></a>
+        {% endfor %}
+      </li>
+    </ul>
             </aside>
             <main class="col-md-6 border-left">
     <form action="{% url 'add_to_cart' product.slug%}" method="POST">
