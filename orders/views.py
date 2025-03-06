@@ -27,6 +27,11 @@ def place_order(request):
     # TO GET USER ADDRESS
     if request.method == 'POST':
         selected_address_id = request.POST.get('selected_address') # GET THE VALUE OF THE RADIO BOX IN CHECKOUT PAGE (value = address.id)
+
+        if selected_address_id is None:
+            messages.error(request, 'Select address before placing Order') # MAKE SURE THAT USER SELECTED ADRESSS.
+            return redirect('checkout')
+        
         selected_address = UserAddress.objects.get(id=selected_address_id, user=request.user)
         print(selected_address, selected_address_id)
 
@@ -76,6 +81,10 @@ def place_order_COD(request):
         return redirect("cart")  # Redirect to the cart page
 
     selected_address_id = request.session.get('selected_address_id')
+    if selected_address_id is None:
+        messages.error(request, 'Select address before placing Order') # MAKE SURE THAT USER SELECTED ADRESSS.
+        return redirect(request.META.get('HTTP_REFERER','home'))
+    
     user_address = UserAddress.objects.get(id=selected_address_id, user=current_user)
 
     
@@ -176,6 +185,10 @@ def razor_pay_verification(request):
         return redirect("cart")  # Redirect to the cart page
 
     selected_address_id = request.session.get('selected_address_id')
+    if selected_address_id is None:
+        messages.error(request, 'Select address before placing Order') # MAKE SURE THAT USER SELECTED ADRESSS.
+        return redirect(request.META.get('HTTP_REFERER','home'))
+    
     user_address = UserAddress.objects.get(id=selected_address_id, user=current_user)
 
     

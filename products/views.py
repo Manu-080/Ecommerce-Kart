@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import ListView
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
@@ -37,7 +37,7 @@ def products(request, category_slug=None):
     products_count = products.count()
     all_categories = Category.objects.all()
 
-    paginator = Paginator(products, 2) # show 9 products.
+    paginator = Paginator(products, 6) # show 6 products.
     page_number = request.GET.get('page') # get the page number from the url
     products = paginator.get_page(page_number) # get the products for the page number
 
@@ -56,6 +56,7 @@ def search(request):
         serach_item = request.GET.get('keyword')
         if not serach_item or len(serach_item) > 30:
             serach_item = Product.objects.none()
+            return redirect('page_404')
             # i should implement 404 page later
         else:
             serach_output = Product.objects.filter(name__icontains = serach_item)

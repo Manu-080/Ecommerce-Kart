@@ -88,7 +88,7 @@ def dashboard(request):
     return render(request, 'user/dashboard.html', context)
 
 
-@login_required(login_url='login')
+
 def forgot_password(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -107,7 +107,7 @@ def forgot_password(request):
     return render(request, 'user/forgot_password.html')
 
 
-@login_required(login_url='login')
+
 def verify_otp(request):
     email = request.session.get('reset_email') # Retrirve the email from session
 
@@ -124,7 +124,7 @@ def verify_otp(request):
     return render(request, 'user/verify_otp.html')
 
 
-@login_required(login_url='login')
+
 def reset_password(request):
     email = request.session.get('reset_email') # Retrirve the email from session
 
