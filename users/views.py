@@ -79,6 +79,7 @@ def signout(request):
 def dashboard(request):
     try:
         ordered_items = OrderItem.objects.filter(user=request.user)
+        
     except OrderItem.DoesNotExist:
         pass
 

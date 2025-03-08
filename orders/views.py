@@ -8,6 +8,7 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.views.decorators.http import require_POST
 
 from .models import UserAddress, Order, OrderItem, Payment
 from cart.models import CartItem
@@ -168,7 +169,6 @@ def create_payment(request):
             razoapay_order = client.order.create(data=payment_data)
             razoapay_order_id = razoapay_order['id']
 
-            request.session['razoapay_order_id'] = razoapay_order_id
 
             return JsonResponse(razoapay_order)
 
@@ -176,12 +176,40 @@ def create_payment(request):
             return JsonResponse({"error": str(e)}, status=400)
         
 
-
+@csrf_exempt
+@require_POST
 @login_required(login_url='login')
 def razor_pay_verification(request):
 
     current_user = request.user
 
+    # Get payment details from POST body
+    data = json.loads(request.body)
+    payment_id = data.get('razorpay_payment_id')
+    order_id = data.get('razorpay_order_id')
+    signature = data.get('razorpay_signature')
+
+    if not(payment_id and order_id and signature):
+        messages.error(request, 'Invalid payment credentials')
+        return redirect('cart')
+
+    
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+    params_dict = {
+        'razorpay_payment_id':payment_id,
+        'razorpay_order_id': order_id,
+        'razorpay_signature': signature,        
+    }
+
+    try:
+        client.utility.verify_payment_signature(params_dict)
+    except razorpay.errors.SignatureVerificationError:
+        messages.error(request, ' Payment verification failed. Signature mismatch.')
+        return redirect('cart')
+
+
+    # Proceed with order creation only if payment is verified
     cart_item = CartItem.objects.filter(cart__user = current_user) # gets all the items in cart corresponding to the user.
 
     # If the cart is empty, prevent access and redirect to cart page
@@ -189,6 +217,7 @@ def razor_pay_verification(request):
         messages.error(request, "Your cart is empty. Add items before proceeding to checkout.")
         return redirect("cart")  # Redirect to the cart page
 
+    # get adress id that is stored in session.
     selected_address_id = request.session.get('selected_address_id')
     if selected_address_id is None:
         messages.error(request, 'Select address before placing Order') # MAKE SURE THAT USER SELECTED ADRESSS.
@@ -239,7 +268,7 @@ def razor_pay_verification(request):
         order=order, 
         payment_method="Razorpay", 
         amount=total_price, 
-        transaction_id=request.session.get('razoapay_order_id')
+        transaction_id=payment_id
         )
     messages.success(request, 'Order placed successfully')
 
@@ -252,10 +281,9 @@ def razor_pay_verification(request):
     # delete cartitems and value in session
     cart_item.delete()
     del request.session['selected_address_id'] # to delete session id
-    del request.session['razoapay_order_id'] # to delete session id
 
 
-    return redirect('home')
+    return JsonResponse({"status": "success", "redirect_url": "/dashboard/"}) # return redirect to dashboard page using url path not name.
 
 
 

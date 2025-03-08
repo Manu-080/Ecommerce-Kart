@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}{{user.username}}  Profile{% endblock title %}
-
+{% load custom_filters_multiply %}
 
 {% block content %}
 
@@ -76,7 +76,7 @@
                                                 <label for="">{{item.quantity}}</label>
                                     </td>
                                     <td>
-                                        <label for="" style="font-weight:bold;">₹ {{item.price}}</label>
+                                        <label for="" style="font-weight:bold;">₹ {{item.price |multiply:item.quantity }}</label>
                                     </td>
                           
                                 </tr>
